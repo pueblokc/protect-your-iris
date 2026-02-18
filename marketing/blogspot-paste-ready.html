@@ -1,0 +1,397 @@
+<!--
+  =====================================================
+  BLOGSPOT PASTE-READY CONTENT
+  =====================================================
+
+  HOW TO USE:
+  1. Go to blogger.com and sign in
+  2. Click "New Post"
+  3. Set the title to: Protect Your Iris — The Free Guide That Took 62 Cameras and One Existential Crisis to Write
+  4. Click the HTML view toggle (pencil icon → </> icon)
+  5. Select ALL and paste EVERYTHING below this comment block
+  6. Add labels: blue iris, unifi protect, surveillance, rtsp, cameras, powershell, home automation, open source
+  7. Click Publish
+
+  The inline SVG cartoons will render directly in the blog post.
+  =====================================================
+-->
+
+<div style="text-align: center; margin-bottom: 30px;">
+<p style="font-size: 1.2em; color: #546E7A; margin-top: 0;">The Free Guide That Took 62 Cameras and One Existential Crisis to Write</p>
+</div>
+
+<div style="text-align: center; margin: 30px 0;">
+<a href="https://github.com/pueblokc/protect-your-iris" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #1565C0, #00838F); color: white; padding: 14px 32px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 1.1em;">View the Guide on GitHub →</a>
+</div>
+
+<p>There's a moment — somewhere around the 37th camera — where you start questioning your life choices.</p>
+
+<p>The CPU is pegged at 100%. Half the cameras say "NO SIGNAL." The registry editor is open with 14 tabs. It's 3 AM. The coffee is gone. And you're Googling things like <code>ip_subpath vs ip_path2 blue iris</code> and getting zero results because apparently <i>nobody has documented this.</i></p>
+
+<div style="text-align: center; margin: 40px 0;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="360" height="360" style="border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+  <rect width="400" height="400" fill="#f0f4f8" rx="20"/>
+  <rect x="170" y="40" width="60" height="20" rx="4" fill="#666"/>
+  <rect x="195" y="55" width="10" height="30" fill="#555"/>
+  <g transform="translate(200, 140) rotate(-15)">
+    <rect x="-60" y="-30" width="120" height="60" rx="10" fill="#37474F"/>
+    <rect x="-55" y="-25" width="110" height="50" rx="8" fill="#455A64"/>
+    <circle cx="70" cy="0" r="28" fill="#263238"/>
+    <circle cx="70" cy="0" r="22" fill="#1a1a2e"/>
+    <circle cx="70" cy="0" r="16" fill="#37474F"/>
+    <circle cx="-45" cy="-18" r="5" fill="#333" stroke="#555" stroke-width="1"/>
+    <ellipse cx="-15" cy="-5" rx="7" ry="9" fill="white"/>
+    <ellipse cx="15" cy="-5" rx="7" ry="9" fill="white"/>
+    <circle cx="-15" cy="-2" r="4" fill="#1a1a2e"/>
+    <circle cx="15" cy="-2" r="4" fill="#1a1a2e"/>
+    <line x1="-25" y1="-18" x2="-8" y2="-14" stroke="#CFD8DC" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="8" y1="-14" x2="25" y2="-18" stroke="#CFD8DC" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M-12,12 Q0,6 12,12" fill="none" stroke="#CFD8DC" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <g fill="#42A5F5" opacity="0.8">
+    <ellipse cx="155" cy="175" rx="4" ry="7"/>
+    <ellipse cx="150" cy="200" rx="3" ry="6"/>
+    <ellipse cx="148" cy="225" rx="4" ry="7"/>
+    <ellipse cx="145" cy="255" rx="3" ry="5"/>
+    <ellipse cx="195" cy="180" rx="4" ry="7"/>
+    <ellipse cx="198" cy="210" rx="3" ry="6"/>
+    <ellipse cx="200" cy="240" rx="4" ry="7"/>
+    <ellipse cx="202" cy="265" rx="3" ry="5"/>
+  </g>
+  <ellipse cx="175" cy="310" rx="70" ry="15" fill="#42A5F5" opacity="0.3"/>
+  <g transform="translate(290, 100)">
+    <rect x="-60" y="-25" width="120" height="50" rx="12" fill="white" stroke="#E53935" stroke-width="2"/>
+    <polygon points="-20,25 -30,45 -5,25" fill="white" stroke="#E53935" stroke-width="2"/>
+    <polygon points="-19,24 -28,42 -6,24" fill="white"/>
+    <text x="0" y="-4" text-anchor="middle" font-family="Impact, sans-serif" font-size="16" fill="#E53935">NO SIGNAL</text>
+    <text x="0" y="14" text-anchor="middle" font-family="Comic Sans MS, cursive" font-size="11" fill="#666">again?!</text>
+  </g>
+  <text x="200" y="365" text-anchor="middle" font-family="Comic Sans MS, cursive" font-size="16" fill="#455A64">"I just want to stream..."</text>
+</svg>
+<p style="font-size: 0.85em; color: #90A4AE; margin-top: 8px;"><i>Every UniFi Protect camera at 2 AM, probably.</i></p>
+</div>
+
+<p>That was me. A few weeks ago, I migrated a 62-camera UniFi Protect surveillance system to Blue Iris 6. What was supposed to be "just point BI6 at the RTSP feeds" turned into one of the most undocumented, discovery-intensive integration projects I've ever tackled.</p>
+
+<p>So I wrote the guide I wish existed.</p>
+
+<h2 style="color: #1565C0; border-bottom: 2px solid #E3F2FD; padding-bottom: 8px;">Introducing: Protect Your Iris</h2>
+
+<p><b><a href="https://github.com/pueblokc/protect-your-iris" target="_blank">Protect Your Iris</a></b> is a free, open-source, MIT-licensed guide to integrating Blue Iris 6 with UniFi Protect. It covers everything from "what is RTSP" to "here's a PowerShell script that'll set up all 62 cameras for you automatically."</p>
+
+<p>It's written for real humans — not marketing departments. And it includes every single gotcha, bug, and undocumented behavior we discovered along the way.</p>
+
+<h3 style="color: #00838F;">What's Inside</h3>
+
+<ul style="line-height: 2.2;">
+<li><b>5 comprehensive sections</b> — from beginner to advanced</li>
+<li><b>3 PowerShell scripts</b> — token generation, bulk camera setup, scheduled refresh</li>
+<li><b>Complete troubleshooting flowcharts</b> — because "NO SIGNAL" means 8 different things</li>
+<li><b>Registry deep-dives</b> — the stuff Blue Iris doesn't tell you about its own config format</li>
+<li><b>Performance optimization</b> — how we went from 100% CPU to 9%</li>
+<li><b>Multi-NVR support</b> — pulling cameras from multiple Protect NVRs into one view</li>
+</ul>
+
+<h2 style="color: #1565C0; border-bottom: 2px solid #E3F2FD; padding-bottom: 8px;">The Before and After</h2>
+
+<p>The biggest win? Performance. When you first add 62 cameras to Blue Iris without knowing what you're doing, this happens:</p>
+
+<div style="text-align: center; margin: 40px 0;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="360" height="360" style="border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+  <rect width="400" height="400" fill="#FFF3E0" rx="20"/>
+  <g transform="translate(200, 220)">
+    <rect x="-70" y="-70" width="140" height="140" rx="8" fill="#78909C"/>
+    <rect x="-60" y="-60" width="120" height="120" rx="6" fill="#546E7A"/>
+    <rect x="-40" y="-40" width="80" height="80" rx="4" fill="#37474F"/>
+    <g fill="#90A4AE">
+      <rect x="-80" y="-50" width="12" height="4" rx="1"/>
+      <rect x="-80" y="-30" width="12" height="4" rx="1"/>
+      <rect x="-80" y="-10" width="12" height="4" rx="1"/>
+      <rect x="-80" y="10" width="12" height="4" rx="1"/>
+      <rect x="-80" y="30" width="12" height="4" rx="1"/>
+      <rect x="-80" y="50" width="12" height="4" rx="1"/>
+      <rect x="68" y="-50" width="12" height="4" rx="1"/>
+      <rect x="68" y="-30" width="12" height="4" rx="1"/>
+      <rect x="68" y="-10" width="12" height="4" rx="1"/>
+      <rect x="68" y="10" width="12" height="4" rx="1"/>
+      <rect x="68" y="30" width="12" height="4" rx="1"/>
+      <rect x="68" y="50" width="12" height="4" rx="1"/>
+    </g>
+    <text x="0" y="-8" text-anchor="middle" font-family="Impact, sans-serif" font-size="32" fill="#FF5722">100%</text>
+    <text x="0" y="18" text-anchor="middle" font-family="Consolas, monospace" font-size="14" fill="#FFB74D">CPU</text>
+    <g stroke="#FF5722" stroke-width="3" stroke-linecap="round">
+      <line x1="-25" y1="-40" x2="-15" y2="-30"/>
+      <line x1="-15" y1="-40" x2="-25" y2="-30"/>
+      <line x1="15" y1="-40" x2="25" y2="-30"/>
+      <line x1="25" y1="-40" x2="15" y2="-30"/>
+    </g>
+    <g fill="#42A5F5">
+      <ellipse cx="-85" cy="-65" rx="5" ry="8"/>
+      <ellipse cx="90" cy="-55" rx="4" ry="6"/>
+      <ellipse cx="-75" cy="-80" rx="3" ry="5"/>
+    </g>
+  </g>
+  <g opacity="0.85">
+    <path d="M160,130 Q170,90 180,110 Q190,70 200,105 Q210,60 220,100 Q230,75 240,115" fill="none" stroke="#FF5722" stroke-width="3"/>
+    <path d="M165,135 Q175,100 185,115 Q195,80 205,110 Q215,70 225,105 Q235,85 245,120" fill="#FF5722" opacity="0.3"/>
+    <path d="M175,140 Q182,110 190,125 Q198,95 206,120 Q214,90 222,125 Q230,105 235,135" fill="#FF9800" opacity="0.5"/>
+    <path d="M185,142 Q192,120 200,130 Q208,108 216,128 Q222,115 228,138" fill="#FFC107" opacity="0.4"/>
+  </g>
+  <g fill="#455A64">
+    <g transform="translate(100, 60) rotate(-20) scale(0.4)"><rect x="-30" y="-15" width="60" height="30" rx="5"/><circle cx="35" cy="0" r="14"/></g>
+    <g transform="translate(300, 40) rotate(15) scale(0.35)"><rect x="-30" y="-15" width="60" height="30" rx="5"/><circle cx="35" cy="0" r="14"/></g>
+    <g transform="translate(80, 120) rotate(-30) scale(0.3)"><rect x="-30" y="-15" width="60" height="30" rx="5"/><circle cx="35" cy="0" r="14"/></g>
+    <g transform="translate(330, 110) rotate(25) scale(0.35)"><rect x="-30" y="-15" width="60" height="30" rx="5"/><circle cx="35" cy="0" r="14"/></g>
+    <g transform="translate(55, 190) rotate(-10) scale(0.25)"><rect x="-30" y="-15" width="60" height="30" rx="5"/><circle cx="35" cy="0" r="14"/></g>
+    <g transform="translate(350, 190) rotate(10) scale(0.25)"><rect x="-30" y="-15" width="60" height="30" rx="5"/><circle cx="35" cy="0" r="14"/></g>
+  </g>
+  <text x="200" y="55" text-anchor="middle" font-family="Comic Sans MS, cursive" font-size="14" fill="#BF360C">* 62 cameras added *</text>
+  <text x="200" y="365" text-anchor="middle" font-family="Comic Sans MS, cursive" font-size="16" fill="#455A64">"Before reading the guide"</text>
+</svg>
+</div>
+
+<p>Yeah. That was us. The CPU was literally <i>on fire</i> (figuratively... mostly). Every camera decoding its own 4K stream independently, no hardware acceleration, no sub-stream separation. Pure, unoptimized chaos.</p>
+
+<p>After applying three key optimizations from the guide — <code>smartdecode</code>, <code>limit_live</code>, and dual-stream configuration — we got this:</p>
+
+<div style="text-align: center; margin: 40px 0;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="360" height="360" style="border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+  <rect width="400" height="400" fill="#E8F5E9" rx="20"/>
+  <g transform="translate(50, 50)">
+    <circle cx="0" cy="0" r="25" fill="#FFC107" opacity="0.6"/>
+    <g stroke="#FFC107" stroke-width="2" opacity="0.4">
+      <line x1="0" y1="-40" x2="0" y2="-32"/>
+      <line x1="28" y1="-28" x2="23" y2="-23"/>
+      <line x1="40" y1="0" x2="32" y2="0"/>
+      <line x1="28" y1="28" x2="23" y2="23"/>
+    </g>
+  </g>
+  <g transform="translate(200, 200)">
+    <rect x="-70" y="-70" width="140" height="140" rx="8" fill="#66BB6A"/>
+    <rect x="-60" y="-60" width="120" height="120" rx="6" fill="#43A047"/>
+    <rect x="-40" y="-40" width="80" height="80" rx="4" fill="#2E7D32"/>
+    <g fill="#81C784">
+      <rect x="-80" y="-50" width="12" height="4" rx="1"/>
+      <rect x="-80" y="-30" width="12" height="4" rx="1"/>
+      <rect x="-80" y="-10" width="12" height="4" rx="1"/>
+      <rect x="-80" y="10" width="12" height="4" rx="1"/>
+      <rect x="-80" y="30" width="12" height="4" rx="1"/>
+      <rect x="-80" y="50" width="12" height="4" rx="1"/>
+      <rect x="68" y="-50" width="12" height="4" rx="1"/>
+      <rect x="68" y="-30" width="12" height="4" rx="1"/>
+      <rect x="68" y="-10" width="12" height="4" rx="1"/>
+      <rect x="68" y="10" width="12" height="4" rx="1"/>
+      <rect x="68" y="30" width="12" height="4" rx="1"/>
+      <rect x="68" y="50" width="12" height="4" rx="1"/>
+    </g>
+    <text x="0" y="-5" text-anchor="middle" font-family="Impact, sans-serif" font-size="36" fill="white">9%</text>
+    <text x="0" y="18" text-anchor="middle" font-family="Consolas, monospace" font-size="14" fill="#C8E6C9">CPU</text>
+    <g transform="translate(0, -35)">
+      <rect x="-28" y="-6" width="22" height="14" rx="3" fill="#1a1a1a"/>
+      <rect x="6" y="-6" width="22" height="14" rx="3" fill="#1a1a1a"/>
+      <line x1="-6" y1="1" x2="6" y2="1" stroke="#1a1a1a" stroke-width="2"/>
+      <line x1="-28" y1="0" x2="-35" y2="-4" stroke="#1a1a1a" stroke-width="2"/>
+      <line x1="28" y1="0" x2="35" y2="-4" stroke="#1a1a1a" stroke-width="2"/>
+      <line x1="-22" y1="-3" x2="-16" y2="-3" stroke="white" stroke-width="1" opacity="0.4"/>
+      <line x1="12" y1="-3" x2="18" y2="-3" stroke="white" stroke-width="1" opacity="0.4"/>
+    </g>
+    <path d="M-15,42 Q0,55 15,42" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(0, 55)">
+    <g fill="#78909C">
+      <g transform="translate(65, 0) scale(0.3)"><rect x="-25" y="-12" width="50" height="24" rx="4"/><circle cx="30" cy="0" r="12"/><circle cx="-18" cy="-8" r="3" fill="#4CAF50"/></g>
+      <g transform="translate(120, 0) scale(0.3)"><rect x="-25" y="-12" width="50" height="24" rx="4"/><circle cx="30" cy="0" r="12"/><circle cx="-18" cy="-8" r="3" fill="#4CAF50"/></g>
+      <g transform="translate(175, 0) scale(0.3)"><rect x="-25" y="-12" width="50" height="24" rx="4"/><circle cx="30" cy="0" r="12"/><circle cx="-18" cy="-8" r="3" fill="#4CAF50"/></g>
+      <g transform="translate(230, 0) scale(0.3)"><rect x="-25" y="-12" width="50" height="24" rx="4"/><circle cx="30" cy="0" r="12"/><circle cx="-18" cy="-8" r="3" fill="#4CAF50"/></g>
+      <g transform="translate(285, 0) scale(0.3)"><rect x="-25" y="-12" width="50" height="24" rx="4"/><circle cx="30" cy="0" r="12"/><circle cx="-18" cy="-8" r="3" fill="#4CAF50"/></g>
+      <g transform="translate(340, 0) scale(0.3)"><rect x="-25" y="-12" width="50" height="24" rx="4"/><circle cx="30" cy="0" r="12"/><circle cx="-18" cy="-8" r="3" fill="#4CAF50"/></g>
+    </g>
+    <text x="370" y="5" font-family="Consolas, monospace" font-size="11" fill="#4CAF50">x62</text>
+  </g>
+  <g fill="#66BB6A" opacity="0.5">
+    <text x="310" y="160" font-size="24">♫</text>
+    <text x="330" y="140" font-size="18">♪</text>
+    <text x="85" y="170" font-size="20">♩</text>
+  </g>
+  <g transform="translate(320, 230)">
+    <rect x="-8" y="-20" width="16" height="30" rx="3" fill="#81D4FA" opacity="0.5"/>
+    <rect x="-10" y="-22" width="20" height="4" rx="2" fill="#B3E5FC"/>
+    <line x1="4" y1="-22" x2="15" y2="-35" stroke="#795548" stroke-width="2"/>
+    <circle cx="18" cy="-38" r="5" fill="#FF5722" opacity="0.7"/>
+  </g>
+  <text x="200" y="355" text-anchor="middle" font-family="Comic Sans MS, cursive" font-size="16" fill="#2E7D32">"After reading the guide"</text>
+  <g transform="translate(200, 380)">
+    <rect x="-70" y="-10" width="140" height="20" rx="10" fill="#43A047" opacity="0.3"/>
+    <text x="0" y="5" text-anchor="middle" font-family="Consolas, monospace" font-size="11" fill="#2E7D32">smartdecode=1 FTW</text>
+  </g>
+</svg>
+</div>
+
+<p><b>100% CPU down to 9%.</b> Same 62 cameras. Same hardware. Just three configuration changes that nobody documented until now.</p>
+
+<h2 style="color: #1565C0; border-bottom: 2px solid #E3F2FD; padding-bottom: 8px;">The Hard-Won Discoveries</h2>
+
+<p>Here's the thing about Blue Iris 6 + UniFi Protect integration: the official documentation for both products essentially says "use RTSP" and leaves you to figure out the rest. There's a <i>lot</i> of rest.</p>
+
+<p>Some of the things we discovered the hard way:</p>
+
+<div style="background: #FFF8E1; border-left: 4px solid #FF6B35; padding: 20px; margin: 30px 0; border-radius: 0 8px 8px 0;">
+<p style="margin: 0 0 12px 0;"><b style="color: #E65100; font-family: monospace;">ip_subpath</b> is the actual sub-stream field in the registry. Not <code>ip_path2</code>. If you search for "Blue Iris sub stream path" you'll find exactly zero documentation about this.</p>
+<p style="margin: 0 0 12px 0;"><b style="color: #E65100; font-family: monospace;">MEDIUM</b> quality RTSP tokens fail on ~40% of cameras. Always use HIGH for main streams and LOW for sub streams. Never MEDIUM.</p>
+<p style="margin: 0 0 12px 0;"><b style="color: #E65100; font-family: monospace;">ip_port</b> must be set to 80, not 7447. Yes, RTSP runs on 7447. But Blue Iris wants 80 here. Don't ask why. Just accept it.</p>
+<p style="margin: 0 0 12px 0;"><b style="color: #E65100;">RTSP tokens are permanent.</b> They don't expire. That's not documented anywhere. We tested it.</p>
+<p style="margin: 0;"><b style="color: #E65100;">BI6 overwrites registry keys while running.</b> If you edit the registry while Blue Iris is running, your changes will be wiped the moment you click anything in the UI. Stop the service first. Every time.</p>
+</div>
+
+<div style="text-align: center; margin: 40px 0;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="360" height="360" style="border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+  <rect width="400" height="400" fill="#EDE7F6" rx="20"/>
+  <rect x="50" y="280" width="300" height="12" rx="3" fill="#795548"/>
+  <rect x="60" y="292" width="10" height="60" fill="#6D4C41"/>
+  <rect x="330" y="292" width="10" height="60" fill="#6D4C41"/>
+  <rect x="120" y="180" width="160" height="100" rx="5" fill="#37474F"/>
+  <rect x="125" y="185" width="150" height="85" rx="3" fill="#1a1a2e"/>
+  <rect x="185" y="275" width="30" height="10" fill="#455A64"/>
+  <rect x="170" y="280" width="60" height="5" rx="2" fill="#546E7A"/>
+  <g transform="translate(130, 190)">
+    <text font-family="Consolas, monospace" font-size="6" fill="#4CAF50">
+      <tspan x="0" dy="8">HKLM\SOFTWARE\Perspective</tspan>
+      <tspan x="0" dy="8" fill="#FF5722">ERROR: ip_path2 not wor</tspan>
+      <tspan x="0" dy="8" fill="#FFC107">ip_subpath = ???</tspan>
+      <tspan x="0" dy="8" fill="#4CAF50">dsname = admin@192.168</tspan>
+      <tspan x="0" dy="8" fill="#FF5722">NO_SIGNAL NO_SIGNAL NO</tspan>
+      <tspan x="0" dy="8" fill="#FFC107">smartdecode = 0 ?!?!</tspan>
+      <tspan x="0" dy="8" fill="#FF5722">ip_port = 7447 WRONG!</tspan>
+      <tspan x="0" dy="8" fill="#4CAF50">type = 4</tspan>
+      <tspan x="0" dy="8" fill="#FF5722">MEDIUM TOKEN FAILED x37</tspan>
+    </text>
+  </g>
+  <g transform="translate(200, 165)">
+    <circle cx="0" cy="-20" r="18" fill="#FFCC80"/>
+    <g stroke="#5D4037" stroke-width="2" stroke-linecap="round">
+      <line x1="-10" y1="-38" x2="-15" y2="-52"/>
+      <line x1="-3" y1="-38" x2="-5" y2="-55"/>
+      <line x1="5" y1="-38" x2="3" y2="-53"/>
+      <line x1="12" y1="-37" x2="15" y2="-50"/>
+      <line x1="-16" y1="-32" x2="-25" y2="-42"/>
+      <line x1="16" y1="-32" x2="25" y2="-42"/>
+    </g>
+    <circle cx="-7" cy="-22" r="3" fill="white"/>
+    <circle cx="7" cy="-22" r="3" fill="white"/>
+    <circle cx="-7" cy="-21" r="1.5" fill="#1a1a2e"/>
+    <circle cx="7" cy="-21" r="1.5" fill="#1a1a2e"/>
+    <path d="M-11,-18 Q-7,-15 -3,-18" fill="none" stroke="#D7CCC8" stroke-width="1"/>
+    <path d="M3,-18 Q7,-15 11,-18" fill="none" stroke="#D7CCC8" stroke-width="1"/>
+    <ellipse cx="0" cy="-10" rx="6" ry="5" fill="#3E2723"/>
+  </g>
+  <g font-family="Consolas, monospace" font-size="9" opacity="0.7">
+    <g transform="translate(30, 40) rotate(-15)">
+      <rect x="-5" y="-8" width="90" height="16" rx="3" fill="#FFF9C4"/>
+      <text x="40" y="4" text-anchor="middle" fill="#F57F17">ip_path2=???</text>
+    </g>
+    <g transform="translate(280, 35) rotate(10)">
+      <rect x="-5" y="-8" width="100" height="16" rx="3" fill="#FFCDD2"/>
+      <text x="45" y="4" text-anchor="middle" fill="#C62828">ip_port=7447!</text>
+    </g>
+    <g transform="translate(20, 100) rotate(-8)">
+      <rect x="-5" y="-8" width="95" height="16" rx="3" fill="#C8E6C9"/>
+      <text x="42" y="4" text-anchor="middle" fill="#2E7D32">smartdecode=1</text>
+    </g>
+    <g transform="translate(290, 110) rotate(12)">
+      <rect x="-5" y="-8" width="80" height="16" rx="3" fill="#BBDEFB"/>
+      <text x="35" y="4" text-anchor="middle" fill="#1565C0">ip_subpath</text>
+    </g>
+    <g transform="translate(10, 160) rotate(-5)">
+      <rect x="-5" y="-8" width="70" height="16" rx="3" fill="#FFCDD2"/>
+      <text x="30" y="4" text-anchor="middle" fill="#C62828">MEDIUM?!</text>
+    </g>
+    <g transform="translate(310, 170) rotate(8)">
+      <rect x="-5" y="-8" width="80" height="16" rx="3" fill="#FFF9C4"/>
+      <text x="35" y="4" text-anchor="middle" fill="#F57F17">dsname=???</text>
+    </g>
+    <g transform="translate(50, 330) rotate(-3)">
+      <rect x="-5" y="-8" width="75" height="16" rx="3" fill="#BBDEFB"/>
+      <text x="33" y="4" text-anchor="middle" fill="#1565C0">bvr=1 gpu=</text>
+    </g>
+    <g transform="translate(270, 340) rotate(5)">
+      <rect x="-5" y="-8" width="110" height="16" rx="3" fill="#FFCDD2"/>
+      <text x="50" y="4" text-anchor="middle" fill="#C62828">limit_live=???</text>
+    </g>
+  </g>
+  <g transform="translate(290, 255)">
+    <rect x="-10" y="-15" width="20" height="25" rx="3" fill="white" stroke="#795548" stroke-width="1.5"/>
+    <path d="M10,-8 Q20,-5 10,8" fill="none" stroke="#795548" stroke-width="1.5"/>
+    <ellipse cx="20" cy="10" rx="12" ry="5" fill="#6D4C41" opacity="0.2"/>
+  </g>
+  <g transform="translate(350, 50)">
+    <circle cx="0" cy="0" r="18" fill="white" stroke="#90A4AE" stroke-width="1.5"/>
+    <line x1="0" y1="0" x2="0" y2="-10" stroke="#37474F" stroke-width="1.5"/>
+    <line x1="0" y1="0" x2="-8" y2="3" stroke="#37474F" stroke-width="1"/>
+    <text x="0" y="30" text-anchor="middle" font-family="Comic Sans MS, cursive" font-size="10" fill="#78909C">3:00 AM</text>
+  </g>
+  <text x="200" y="385" text-anchor="middle" font-family="Comic Sans MS, cursive" font-size="14" fill="#4527A0">"There HAS to be a guide for this..."</text>
+</svg>
+<p style="font-size: 0.85em; color: #90A4AE; margin-top: 8px;"><i>Artist's rendition of the author at 3 AM, surrounded by registry keys and regret.</i></p>
+</div>
+
+<h2 style="color: #1565C0; border-bottom: 2px solid #E3F2FD; padding-bottom: 8px;">The Numbers</h2>
+
+<table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+<tr style="background: #E3F2FD;">
+<td style="padding: 12px; border: 1px solid #BBDEFB; font-weight: bold;">Metric</td>
+<td style="padding: 12px; border: 1px solid #BBDEFB; font-weight: bold;">Before</td>
+<td style="padding: 12px; border: 1px solid #BBDEFB; font-weight: bold;">After</td>
+</tr>
+<tr>
+<td style="padding: 12px; border: 1px solid #E0E0E0;">CPU Usage</td>
+<td style="padding: 12px; border: 1px solid #E0E0E0; color: #E53935; font-weight: bold;">100%</td>
+<td style="padding: 12px; border: 1px solid #E0E0E0; color: #2E7D32; font-weight: bold;">9%</td>
+</tr>
+<tr style="background: #FAFAFA;">
+<td style="padding: 12px; border: 1px solid #E0E0E0;">RAM Usage</td>
+<td style="padding: 12px; border: 1px solid #E0E0E0; color: #E53935;">14.6 GB</td>
+<td style="padding: 12px; border: 1px solid #E0E0E0; color: #2E7D32;">200 MB</td>
+</tr>
+<tr>
+<td style="padding: 12px; border: 1px solid #E0E0E0;">Camera Setup Time</td>
+<td style="padding: 12px; border: 1px solid #E0E0E0;">~15 min each (manual)</td>
+<td style="padding: 12px; border: 1px solid #E0E0E0; color: #2E7D32;">~30 sec each (script)</td>
+</tr>
+<tr style="background: #FAFAFA;">
+<td style="padding: 12px; border: 1px solid #E0E0E0;">Cameras Tested</td>
+<td colspan="2" style="padding: 12px; border: 1px solid #E0E0E0; text-align: center; font-weight: bold;">62</td>
+</tr>
+<tr>
+<td style="padding: 12px; border: 1px solid #E0E0E0;">Price</td>
+<td colspan="2" style="padding: 12px; border: 1px solid #E0E0E0; text-align: center; font-weight: bold; color: #2E7D32;">Free. MIT License.</td>
+</tr>
+</table>
+
+<h2 style="color: #1565C0; border-bottom: 2px solid #E3F2FD; padding-bottom: 8px;">Who Should Read This</h2>
+
+<ul style="line-height: 2.2;">
+<li>You just bought Blue Iris and you're staring at it like <i>"now what?"</i></li>
+<li>You're running UniFi Protect and want real recording, playback, and AI detection</li>
+<li>You're upgrading from BI5 to BI6 and nothing works anymore</li>
+<li>Your CPU is at 100% and you're about to throw the server out a window</li>
+<li>You've typed "blue iris unifi protect rtsp" into Google six times and gotten nothing useful</li>
+<li>You want PowerShell scripts that do the boring parts for you</li>
+</ul>
+
+<h2 style="color: #1565C0; border-bottom: 2px solid #E3F2FD; padding-bottom: 8px;">Get the Guide</h2>
+
+<p>The entire guide is free on GitHub. Clone it, fork it, print it, tape it to your server rack. MIT license — do whatever you want with it.</p>
+
+<div style="text-align: center; margin: 40px 0;">
+<a href="https://github.com/pueblokc/protect-your-iris" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #1565C0, #00838F); color: white; padding: 16px 40px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 1.2em; box-shadow: 0 4px 15px rgba(21,101,192,0.3);">View Protect Your Iris on GitHub</a>
+</div>
+
+<p style="text-align: center; color: #90A4AE; font-family: monospace; font-size: 0.9em;">
+<a href="https://github.com/pueblokc/protect-your-iris" target="_blank" style="color: #90A4AE;">github.com/pueblokc/protect-your-iris</a>
+</p>
+
+<hr style="border: none; border-top: 1px solid #E0E0E0; margin: 40px 0;" />
+
+<p style="color: #78909C; font-size: 0.9em;">Found a bug? Have a question? Want to share your own BI6 war story? <a href="https://github.com/pueblokc/protect-your-iris/issues" target="_blank">Open an issue on GitHub</a>. We'd love to hear from you.</p>
+
+<p style="color: #B0BEC5; font-size: 0.8em; text-align: center;"><i>A KCCS Online production. Written with caffeine, determination, and an unreasonable number of registry edits.</i></p>
