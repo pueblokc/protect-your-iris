@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <!-- Scene: A person at a computer, surrounded by floating registry keys, looking overwhelmed -->
+
+  <!-- Background -->
+  <rect width="400" height="400" fill="#EDE7F6" rx="20"/>
+
+  <!-- Desk -->
+  <rect x="50" y="280" width="300" height="12" rx="3" fill="#795548"/>
+  <rect x="60" y="292" width="10" height="60" fill="#6D4C41"/>
+  <rect x="330" y="292" width="10" height="60" fill="#6D4C41"/>
+
+  <!-- Monitor -->
+  <rect x="120" y="180" width="160" height="100" rx="5" fill="#37474F"/>
+  <rect x="125" y="185" width="150" height="85" rx="3" fill="#1a1a2e"/>
+  <!-- Monitor stand -->
+  <rect x="185" y="275" width="30" height="10" fill="#455A64"/>
+  <rect x="170" y="280" width="60" height="5" rx="2" fill="#546E7A"/>
+
+  <!-- Screen content - registry editor chaos -->
+  <g transform="translate(130, 190)">
+    <text font-family="Consolas, monospace" font-size="6" fill="#4CAF50">
+      <tspan x="0" dy="8">HKLM\SOFTWARE\Perspective</tspan>
+      <tspan x="0" dy="8" fill="#FF5722">ERROR: ip_path2 not wor</tspan>
+      <tspan x="0" dy="8" fill="#FFC107">ip_subpath = ???</tspan>
+      <tspan x="0" dy="8" fill="#4CAF50">dsname = admin@192.168</tspan>
+      <tspan x="0" dy="8" fill="#FF5722">NO_SIGNAL NO_SIGNAL NO</tspan>
+      <tspan x="0" dy="8" fill="#FFC107">smartdecode = 0 ?!?!</tspan>
+      <tspan x="0" dy="8" fill="#FF5722">ip_port = 7447 WRONG!</tspan>
+      <tspan x="0" dy="8" fill="#4CAF50">type = 4</tspan>
+      <tspan x="0" dy="8" fill="#FF5722">MEDIUM TOKEN FAILED x37</tspan>
+    </text>
+  </g>
+
+  <!-- Person (stick figure, stressed) -->
+  <g transform="translate(200, 165)">
+    <!-- Head -->
+    <circle cx="0" cy="-20" r="18" fill="#FFCC80"/>
+    <!-- Frazzled hair -->
+    <g stroke="#5D4037" stroke-width="2" stroke-linecap="round">
+      <line x1="-10" y1="-38" x2="-15" y2="-52"/>
+      <line x1="-3" y1="-38" x2="-5" y2="-55"/>
+      <line x1="5" y1="-38" x2="3" y2="-53"/>
+      <line x1="12" y1="-37" x2="15" y2="-50"/>
+      <line x1="-16" y1="-32" x2="-25" y2="-42"/>
+      <line x1="16" y1="-32" x2="25" y2="-42"/>
+    </g>
+    <!-- Tired eyes (bags under them) -->
+    <circle cx="-7" cy="-22" r="3" fill="white"/>
+    <circle cx="7" cy="-22" r="3" fill="white"/>
+    <circle cx="-7" cy="-21" r="1.5" fill="#1a1a2e"/>
+    <circle cx="7" cy="-21" r="1.5" fill="#1a1a2e"/>
+    <!-- Eye bags -->
+    <path d="M-11,-18 Q-7,-15 -3,-18" fill="none" stroke="#D7CCC8" stroke-width="1"/>
+    <path d="M3,-18 Q7,-15 11,-18" fill="none" stroke="#D7CCC8" stroke-width="1"/>
+    <!-- Open mouth (scream) -->
+    <ellipse cx="0" cy="-10" rx="6" ry="5" fill="#3E2723"/>
+  </g>
+
+  <!-- Floating registry keys everywhere -->
+  <g font-family="Consolas, monospace" font-size="9" opacity="0.7">
+    <g transform="translate(30, 40) rotate(-15)">
+      <rect x="-5" y="-8" width="90" height="16" rx="3" fill="#FFF9C4"/>
+      <text x="40" y="4" text-anchor="middle" fill="#F57F17">ip_path2=???</text>
+    </g>
+    <g transform="translate(280, 35) rotate(10)">
+      <rect x="-5" y="-8" width="100" height="16" rx="3" fill="#FFCDD2"/>
+      <text x="45" y="4" text-anchor="middle" fill="#C62828">ip_port=7447!</text>
+    </g>
+    <g transform="translate(20, 100) rotate(-8)">
+      <rect x="-5" y="-8" width="95" height="16" rx="3" fill="#C8E6C9"/>
+      <text x="42" y="4" text-anchor="middle" fill="#2E7D32">smartdecode=1</text>
+    </g>
+    <g transform="translate(290, 110) rotate(12)">
+      <rect x="-5" y="-8" width="80" height="16" rx="3" fill="#BBDEFB"/>
+      <text x="35" y="4" text-anchor="middle" fill="#1565C0">ip_subpath</text>
+    </g>
+    <g transform="translate(10, 160) rotate(-5)">
+      <rect x="-5" y="-8" width="70" height="16" rx="3" fill="#FFCDD2"/>
+      <text x="30" y="4" text-anchor="middle" fill="#C62828">MEDIUM?!</text>
+    </g>
+    <g transform="translate(310, 170) rotate(8)">
+      <rect x="-5" y="-8" width="80" height="16" rx="3" fill="#FFF9C4"/>
+      <text x="35" y="4" text-anchor="middle" fill="#F57F17">dsname=???</text>
+    </g>
+    <g transform="translate(50, 330) rotate(-3)">
+      <rect x="-5" y="-8" width="75" height="16" rx="3" fill="#BBDEFB"/>
+      <text x="33" y="4" text-anchor="middle" fill="#1565C0">bvr=1 gpu=</text>
+    </g>
+    <g transform="translate(270, 340) rotate(5)">
+      <rect x="-5" y="-8" width="110" height="16" rx="3" fill="#FFCDD2"/>
+      <text x="50" y="4" text-anchor="middle" fill="#C62828">limit_live=???</text>
+    </g>
+  </g>
+
+  <!-- Coffee cup (empty, spilled) -->
+  <g transform="translate(290, 255)">
+    <rect x="-10" y="-15" width="20" height="25" rx="3" fill="white" stroke="#795548" stroke-width="1.5"/>
+    <path d="M10,-8 Q20,-5 10,8" fill="none" stroke="#795548" stroke-width="1.5"/>
+    <!-- Coffee stain -->
+    <ellipse cx="20" cy="10" rx="12" ry="5" fill="#6D4C41" opacity="0.2"/>
+  </g>
+
+  <!-- Clock showing 3 AM -->
+  <g transform="translate(350, 50)">
+    <circle cx="0" cy="0" r="18" fill="white" stroke="#90A4AE" stroke-width="1.5"/>
+    <line x1="0" y1="0" x2="0" y2="-10" stroke="#37474F" stroke-width="1.5"/>
+    <line x1="0" y1="0" x2="-8" y2="3" stroke="#37474F" stroke-width="1"/>
+    <text x="0" y="30" text-anchor="middle" font-family="Comic Sans MS, cursive" font-size="10" fill="#78909C">3:00 AM</text>
+  </g>
+
+  <!-- Caption -->
+  <text x="200" y="385" text-anchor="middle" font-family="Comic Sans MS, cursive" font-size="14" fill="#4527A0">
+    "There HAS to be a guide for this..."
+  </text>
+</svg>

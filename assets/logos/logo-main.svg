@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a1628"/>
+      <stop offset="100%" style="stop-color:#1a2a4a"/>
+    </linearGradient>
+    <linearGradient id="iris" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2196F3"/>
+      <stop offset="100%" style="stop-color:#00BCD4"/>
+    </linearGradient>
+    <linearGradient id="shield" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#00A3E0"/>
+      <stop offset="100%" style="stop-color:#0057A8"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="248" fill="url(#bg)" filter="url(#shadow)"/>
+  <circle cx="256" cy="256" r="244" fill="none" stroke="url(#iris)" stroke-width="2" opacity="0.4"/>
+
+  <!-- Grid lines -->
+  <g opacity="0.06" stroke="#4fc3f7" stroke-width="0.5">
+    <line x1="56" y1="128" x2="456" y2="128"/>
+    <line x1="56" y1="256" x2="456" y2="256"/>
+    <line x1="56" y1="384" x2="456" y2="384"/>
+    <line x1="128" y1="56" x2="128" y2="456"/>
+    <line x1="256" y1="56" x2="256" y2="456"/>
+    <line x1="384" y1="56" x2="384" y2="456"/>
+  </g>
+
+  <!-- Shield shape behind eye -->
+  <path d="M256,100 L370,155 L370,290 L256,380 L142,290 L142,155 Z"
+        fill="url(#shield)" opacity="0.15" filter="url(#glow)"/>
+  <path d="M256,100 L370,155 L370,290 L256,380 L142,290 L142,155 Z"
+        fill="none" stroke="url(#shield)" stroke-width="2.5" opacity="0.5"/>
+
+  <!-- Eye shape -->
+  <g transform="translate(256, 230)" filter="url(#glow)">
+    <!-- Outer eye -->
+    <ellipse cx="0" cy="0" rx="110" ry="65" fill="none" stroke="url(#iris)" stroke-width="4"/>
+    <!-- Inner iris ring -->
+    <circle cx="0" cy="0" r="45" fill="none" stroke="#2196F3" stroke-width="3.5"/>
+    <!-- Iris fill -->
+    <circle cx="0" cy="0" r="35" fill="#1565C0" opacity="0.6"/>
+    <!-- Pupil -->
+    <circle cx="0" cy="0" r="18" fill="#2196F3" opacity="0.9"/>
+    <!-- Inner pupil -->
+    <circle cx="0" cy="0" r="8" fill="#0D47A1"/>
+    <!-- Highlight -->
+    <circle cx="-10" cy="-12" r="7" fill="white" opacity="0.7"/>
+    <circle cx="6" cy="-6" r="3" fill="white" opacity="0.4"/>
+    <!-- Iris texture lines -->
+    <g stroke="#4fc3f7" stroke-width="0.5" opacity="0.3">
+      <line x1="0" y1="-45" x2="0" y2="-18"/>
+      <line x1="32" y1="-32" x2="13" y2="-13"/>
+      <line x1="45" y1="0" x2="18" y2="0"/>
+      <line x1="32" y1="32" x2="13" y2="13"/>
+      <line x1="0" y1="45" x2="0" y2="18"/>
+      <line x1="-32" y1="32" x2="-13" y2="13"/>
+      <line x1="-45" y1="0" x2="-18" y2="0"/>
+      <line x1="-32" y1="-32" x2="-13" y2="-13"/>
+    </g>
+  </g>
+
+  <!-- "PYI" text at bottom -->
+  <text x="256" y="420" text-anchor="middle" font-family="Segoe UI, Helvetica, sans-serif"
+        font-size="42" font-weight="800" fill="white" letter-spacing="12" opacity="0.9">PYI</text>
+
+  <!-- Corner scan accents -->
+  <g stroke="#4fc3f7" stroke-width="1.5" opacity="0.3">
+    <line x1="80" y1="60" x2="120" y2="60"/>
+    <line x1="80" y1="60" x2="80" y2="90"/>
+    <line x1="392" y1="60" x2="432" y2="60"/>
+    <line x1="432" y1="60" x2="432" y2="90"/>
+    <line x1="80" y1="452" x2="120" y2="452"/>
+    <line x1="80" y1="422" x2="80" y2="452"/>
+    <line x1="392" y1="452" x2="432" y2="452"/>
+    <line x1="432" y1="422" x2="432" y2="452"/>
+  </g>
+</svg>

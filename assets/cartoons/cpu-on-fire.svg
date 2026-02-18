@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <!-- Scene: A CPU chip sweating/on fire while cameras pile on -->
+
+  <!-- Background -->
+  <rect width="400" height="400" fill="#FFF3E0" rx="20"/>
+
+  <!-- CPU chip body -->
+  <g transform="translate(200, 220)">
+    <!-- CPU package -->
+    <rect x="-70" y="-70" width="140" height="140" rx="8" fill="#78909C"/>
+    <rect x="-60" y="-60" width="120" height="120" rx="6" fill="#546E7A"/>
+
+    <!-- CPU die -->
+    <rect x="-40" y="-40" width="80" height="80" rx="4" fill="#37474F"/>
+
+    <!-- CPU pins -->
+    <g fill="#90A4AE">
+      <rect x="-80" y="-50" width="12" height="4" rx="1"/>
+      <rect x="-80" y="-30" width="12" height="4" rx="1"/>
+      <rect x="-80" y="-10" width="12" height="4" rx="1"/>
+      <rect x="-80" y="10" width="12" height="4" rx="1"/>
+      <rect x="-80" y="30" width="12" height="4" rx="1"/>
+      <rect x="-80" y="50" width="12" height="4" rx="1"/>
+      <rect x="68" y="-50" width="12" height="4" rx="1"/>
+      <rect x="68" y="-30" width="12" height="4" rx="1"/>
+      <rect x="68" y="-10" width="12" height="4" rx="1"/>
+      <rect x="68" y="10" width="12" height="4" rx="1"/>
+      <rect x="68" y="30" width="12" height="4" rx="1"/>
+      <rect x="68" y="50" width="12" height="4" rx="1"/>
+    </g>
+
+    <!-- "100%" on the CPU -->
+    <text x="0" y="-8" text-anchor="middle" font-family="Impact, sans-serif" font-size="32" fill="#FF5722">100%</text>
+    <text x="0" y="18" text-anchor="middle" font-family="Consolas, monospace" font-size="14" fill="#FFB74D">CPU</text>
+
+    <!-- Stressed face -->
+    <!-- Eyes (X's for dead) -->
+    <g stroke="#FF5722" stroke-width="3" stroke-linecap="round">
+      <line x1="-25" y1="-40" x2="-15" y2="-30"/>
+      <line x1="-15" y1="-40" x2="-25" y2="-30"/>
+      <line x1="15" y1="-40" x2="25" y2="-30"/>
+      <line x1="25" y1="-40" x2="15" y2="-30"/>
+    </g>
+
+    <!-- Sweat drops -->
+    <g fill="#42A5F5">
+      <ellipse cx="-85" cy="-65" rx="5" ry="8"/>
+      <ellipse cx="90" cy="-55" rx="4" ry="6"/>
+      <ellipse cx="-75" cy="-80" rx="3" ry="5"/>
+    </g>
+  </g>
+
+  <!-- Flames on top -->
+  <g opacity="0.85">
+    <path d="M160,130 Q170,90 180,110 Q190,70 200,105 Q210,60 220,100 Q230,75 240,115"
+          fill="none" stroke="#FF5722" stroke-width="3"/>
+    <path d="M165,135 Q175,100 185,115 Q195,80 205,110 Q215,70 225,105 Q235,85 245,120"
+          fill="#FF5722" opacity="0.3"/>
+    <!-- Inner flames -->
+    <path d="M175,140 Q182,110 190,125 Q198,95 206,120 Q214,90 222,125 Q230,105 235,135"
+          fill="#FF9800" opacity="0.5"/>
+    <path d="M185,142 Q192,120 200,130 Q208,108 216,128 Q222,115 228,138"
+          fill="#FFC107" opacity="0.4"/>
+  </g>
+
+  <!-- Mini cameras raining down -->
+  <g fill="#455A64">
+    <!-- Camera 1 -->
+    <g transform="translate(100, 60) rotate(-20) scale(0.4)">
+      <rect x="-30" y="-15" width="60" height="30" rx="5"/>
+      <circle cx="35" cy="0" r="14"/>
+    </g>
+    <!-- Camera 2 -->
+    <g transform="translate(300, 40) rotate(15) scale(0.35)">
+      <rect x="-30" y="-15" width="60" height="30" rx="5"/>
+      <circle cx="35" cy="0" r="14"/>
+    </g>
+    <!-- Camera 3 -->
+    <g transform="translate(80, 120) rotate(-30) scale(0.3)">
+      <rect x="-30" y="-15" width="60" height="30" rx="5"/>
+      <circle cx="35" cy="0" r="14"/>
+    </g>
+    <!-- Camera 4 -->
+    <g transform="translate(330, 110) rotate(25) scale(0.35)">
+      <rect x="-30" y="-15" width="60" height="30" rx="5"/>
+      <circle cx="35" cy="0" r="14"/>
+    </g>
+    <!-- Camera 5 -->
+    <g transform="translate(55, 190) rotate(-10) scale(0.25)">
+      <rect x="-30" y="-15" width="60" height="30" rx="5"/>
+      <circle cx="35" cy="0" r="14"/>
+    </g>
+    <!-- Camera 6 -->
+    <g transform="translate(350, 190) rotate(10) scale(0.25)">
+      <rect x="-30" y="-15" width="60" height="30" rx="5"/>
+      <circle cx="35" cy="0" r="14"/>
+    </g>
+  </g>
+
+  <!-- "62 cameras" label -->
+  <text x="200" y="55" text-anchor="middle" font-family="Comic Sans MS, cursive" font-size="14" fill="#BF360C">
+    * 62 cameras added *
+  </text>
+
+  <!-- Caption -->
+  <text x="200" y="365" text-anchor="middle" font-family="Comic Sans MS, cursive" font-size="16" fill="#455A64">
+    "Before reading the guide"
+  </text>
+</svg>

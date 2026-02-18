@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Protect Your Iris - Blue Iris 6 + UniFi Protect Integration Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0a1628;
+    color: white;
+    min-height: 100vh;
+  }
+
+  .flyer {
+    max-width: 800px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, #0a1628 0%, #112240 50%, #0d2137 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .grid-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+      linear-gradient(rgba(79,195,247,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,195,247,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+  .hero {
+    text-align: center;
+    padding: 60px 40px 40px;
+    position: relative;
+  }
+
+  .hero h1 {
+    font-size: 3.2rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #2196F3, #00BCD4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+  }
+
+  .hero .subtitle {
+    font-size: 1.3rem;
+    color: #8bb8e8;
+    margin-bottom: 8px;
+  }
+
+  .hero .tagline {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    color: #4fc3f7;
+    opacity: 0.6;
+  }
+
+  .stats-row {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 30px 40px;
+    flex-wrap: wrap;
+  }
+
+  .stat-card {
+    background: rgba(33,150,243,0.1);
+    border: 1px solid rgba(33,150,243,0.2);
+    border-radius: 16px;
+    padding: 20px 28px;
+    text-align: center;
+    flex: 1;
+    min-width: 150px;
+  }
+
+  .stat-card .number {
+    font-size: 2.4rem;
+    font-weight: 900;
+    color: #2196F3;
+  }
+
+  .stat-card .label {
+    font-size: 0.8rem;
+    color: #8bb8e8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  .stat-card.orange { border-color: rgba(255,107,53,0.3); background: rgba(255,107,53,0.08); }
+  .stat-card.orange .number { color: #FF6B35; }
+  .stat-card.green { border-color: rgba(76,175,80,0.3); background: rgba(76,175,80,0.08); }
+  .stat-card.green .number { color: #4CAF50; }
+
+  .features {
+    padding: 20px 40px 40px;
+  }
+
+  .features h2 {
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .feature {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .feature .icon {
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+  }
+
+  .feature h3 {
+    font-size: 1rem;
+    color: #4fc3f7;
+    margin-bottom: 6px;
+  }
+
+  .feature p {
+    font-size: 0.85rem;
+    color: #8bb8e8;
+    line-height: 1.5;
+  }
+
+  .discovery-section {
+    padding: 20px 40px 40px;
+    text-align: center;
+  }
+
+  .discovery-section h2 {
+    font-size: 1.3rem;
+    color: #FF6B35;
+    margin-bottom: 20px;
+  }
+
+  .discovery-cards {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .discovery-card {
+    background: rgba(255,107,53,0.08);
+    border: 1px solid rgba(255,107,53,0.2);
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: #FFB74D;
+    max-width: 220px;
+  }
+
+  .cta {
+    text-align: center;
+    padding: 40px;
+    background: linear-gradient(180deg, transparent, rgba(33,150,243,0.1));
+  }
+
+  .cta h2 {
+    font-size: 1.8rem;
+    margin-bottom: 12px;
+  }
+
+  .cta p {
+    color: #8bb8e8;
+    margin-bottom: 24px;
+    font-size: 1rem;
+  }
+
+  .cta .btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #2196F3, #00BCD4);
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 14px 36px;
+    border-radius: 50px;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    transition: transform 0.2s;
+  }
+
+  .cta .btn:hover { transform: scale(1.05); }
+
+  .cta .subtext {
+    margin-top: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: #4fc3f7;
+    opacity: 0.5;
+  }
+
+  .footer {
+    text-align: center;
+    padding: 30px;
+    border-top: 1px solid rgba(79,195,247,0.1);
+  }
+
+  .footer p {
+    font-size: 0.8rem;
+    color: #546E7A;
+  }
+
+  @media print {
+    body { background: white; }
+    .flyer { background: white !important; }
+    .grid-overlay { display: none; }
+    * { color: #333 !important; }
+    .hero h1 { -webkit-text-fill-color: #2196F3 !important; }
+    .stat-card { border: 1px solid #ddd !important; background: #f5f5f5 !important; }
+    .feature { border: 1px solid #eee !important; background: #fafafa !important; }
+  }
+</style>
+</head>
+<body>
+<div class="flyer">
+  <div class="grid-overlay"></div>
+
+  <div class="hero">
+    <h1>Protect Your Iris</h1>
+    <div class="subtitle">Blue Iris 6 + UniFi Protect Integration Guide</div>
+    <div class="tagline">Battle-tested on 62 cameras. Open source. Written at 3 AM.</div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="number">62</div>
+      <div class="label">Cameras Tested</div>
+    </div>
+    <div class="stat-card orange">
+      <div class="number">100%&rarr;9%</div>
+      <div class="label">CPU Reduction</div>
+    </div>
+    <div class="stat-card green">
+      <div class="number">73x</div>
+      <div class="label">Memory Savings</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">3</div>
+      <div class="label">Free Scripts</div>
+    </div>
+  </div>
+
+  <div class="features">
+    <h2>What's Inside</h2>
+    <div class="feature-grid">
+      <div class="feature">
+        <div class="icon">&#128214;</div>
+        <h3>Beginner to Advanced</h3>
+        <p>From "what is RTSP" to registry injection automation. No knowledge assumed.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">&#9889;</div>
+        <h3>Performance Optimization</h3>
+        <p>smartdecode, dual streaming, limit_live &mdash; the big three that dropped CPU from 100% to 9%.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">&#128295;</div>
+        <h3>PowerShell Scripts</h3>
+        <p>Token generator, bulk camera setup, scheduled refresh. Fully automated pipeline.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">&#128293;</div>
+        <h3>Troubleshooting Bible</h3>
+        <p>NO_SIGNAL flowchart, CPU fixes, MEDIUM token failures, and every gotcha we hit.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">&#127760;</div>
+        <h3>Multi-NVR Support</h3>
+        <p>Pull cameras from multiple Protect NVRs into a single Blue Iris view.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">&#128272;</div>
+        <h3>Integration API Deep Dive</h3>
+        <p>Complete API reference, token lifecycle, stream quality analysis, and automation endpoints.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="discovery-section">
+    <h2>&#128161; Hard-Won Discoveries</h2>
+    <div class="discovery-cards">
+      <div class="discovery-card">ip_subpath is the REAL sub stream field, not ip_path2</div>
+      <div class="discovery-card">MEDIUM quality tokens fail ~40% of cameras</div>
+      <div class="discovery-card">ip_fps is a buffer hint, NOT a framerate throttle</div>
+      <div class="discovery-card">ip_port must be 80, not 7447</div>
+      <div class="discovery-card">BI6 overwrites registry while running</div>
+      <div class="discovery-card">RTSP tokens are permanent &mdash; they don't expire</div>
+    </div>
+  </div>
+
+  <div class="cta">
+    <h2>Free. Open Source. No Strings.</h2>
+    <p>MIT licensed. Use it, fork it, improve it.</p>
+    <a href="https://github.com/pueblokc/protect-your-iris" class="btn">View on GitHub &rarr;</a>
+    <div class="subtext">github.com/pueblokc/protect-your-iris</div>
+  </div>
+
+  <div class="footer">
+    <p>A KCCS Online production &bull; Written with caffeine and determination &bull; 2026</p>
+  </div>
+</div>
+</body>
+</html>
