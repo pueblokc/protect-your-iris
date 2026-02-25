@@ -1337,3 +1337,7 @@ If it saves you time, consider starring the repo. ⭐
 <p align="center">
   <em>Written with ☕ and 🤬 at 3 AM by someone who really should have been sleeping.</em>
 </p>
+
+---
+
+*Built by [KCCS](https://kccsonline.com) with [Claude Code](https://claude.ai/code)*
