@@ -31,6 +31,25 @@
 
 ---
 
+> # 🚨🚨🚨 CRITICAL BUG — READ THIS BEFORE YOU REFRESH TOKENS 🚨🚨🚨
+>
+> **If you update `ip_path` / `ip_subpath` / `dsname` in the BI registry to point at a different stream quality (LOW vs HIGH vs MEDIUM), you MUST ALSO update `xres`, `yres`, `mainxres`, `mainyres`, `zrect_*`, and `ip_aformat` to match the new quality's pixel dimensions.**
+>
+> If you don't, BI will:
+> - Successfully complete the TCP connection to the NVR ✅
+> - Successfully do RTSP DESCRIBE and parse the SDP ✅
+> - **Silently fail at SETUP/PLAY** with a never-ending `Signal: Socket error / Socket closed / network retry` loop ❌
+>
+> **The camera will show "NO SIGNAL" forever** even though the stream is perfectly fine at the protocol level. We burned 3 hours on this in April 2026 before figuring it out.
+>
+> **The earlier versions of `Refresh-Tokens.ps1` in this repo had this bug** — they updated the path fields but never touched resolution fields. If the new token's quality differs from what the camera was originally set up at, the camera will go dead.
+>
+> Details, detection, and fix: jump to **[Critical: Resolution Field Mismatch](#-critical-resolution-field-mismatch-the-silent-killer)** before doing anything else with tokens.
+>
+> Also note (as of Protect firmware circa 2026-04): `POST /proxy/protect/integration/v1/cameras/{id}/rtsps-stream` now returns **HTTP 400 with empty body** regardless of API key. GET still works and returns current tokens, but you can no longer regenerate tokens programmatically — you must toggle RTSP in the Protect web UI per camera, then GET the fresh URLs. See **[Token regeneration workaround](#-token-regeneration-workaround-post-rtsps-stream-returns-400)**.
+
+---
+
 ## ⚠️ Disclaimer
 
 This guide is written by someone who spent an unreasonable number of hours staring at registry keys, RTSP tokens, and CPU graphs at 3 AM. It's based on real-world experience migrating a 62-camera UniFi Protect system to Blue Iris 6.
@@ -38,6 +57,147 @@ This guide is written by someone who spent an unreasonable number of hours stari
 **This is not official documentation** from either Ubiquiti or Perspective Software. It's a field guide — written in the trenches, for the trenches.
 
 Everything here has been tested on real hardware with real cameras. Your mileage may vary, but at least you'll know where the landmines are.
+
+---
+
+## 🚨 Critical: Resolution Field Mismatch (the silent killer)
+
+> Add date discovered: 2026-04-20 · Cost to discover: ~3 hours of production downtime at 2 AM · Environment: 62-camera PAC deployment.
+
+### The bug in one paragraph
+
+Blue Iris 6 stores two things per camera that MUST stay in sync:
+1. **The stream path** (`ip_path` + `ip_subpath` + `ip_path2` + `dsname`) — points at one UniFi Protect RTSP token, which corresponds to ONE specific stream quality (HIGH / MEDIUM / LOW).
+2. **The expected frame dimensions** (`xres`, `yres`, `mainxres`, `mainyres`, `zrect_left/top/right/bottom`) — tell BI's H.264/H.265 decoder "the frames I'm about to receive are this big."
+
+If you refresh tokens or switch quality and only touch the path fields (which is what most refresh scripts do — including the ones in earlier versions of this repo), the resolution fields become a lie. BI then tries to fit 640×360 encoded frames into a decoder buffer sized for 2688×1512 (or vice-versa). The decoder throws, BI closes the socket, waits ~20 seconds, retries, same failure. Forever.
+
+### What it looks like
+
+```
+1   02:59:28.058   court4    Signal: Socket error
+0   02:59:41.972   court4    Signal: main stream loss
+1   02:59:41.972   court4    Signal: network retry
+1   02:59:53.270   court4    Signal: Socket closed
+0   03:00:11.900   court4    Signal: main stream loss
+1   03:00:11.900   court4    Signal: network retry
+1   03:00:49.730   court4    Signal: Socket error
+...
+```
+
+Rinse, repeat, every 20 seconds. The BI UI shows "NO SIGNAL" with a red dot.
+
+### The reason this is a silent killer
+
+All of these are **green** when this bug hits:
+- ✅ `Test-NetConnection -ComputerName NVR_IP -Port 7447` passes
+- ✅ `curl -k https://NVR_IP/proxy/protect/integration/v1/cameras/{id}/rtsps-stream -H "X-API-Key:..."` returns valid tokens
+- ✅ Raw RTSP `DESCRIBE` from BI to the NVR returns `200 OK` + valid SDP describing the stream
+- ✅ `netstat` on the BI box shows `ESTABLISHED` TCP sessions to port 7447 on the NVR
+- ✅ Other cameras on the same NVR using the same port and auth work fine
+
+So every network diagnostic says "the stream is good and BI is talking to the NVR." And yet the camera is dead. The only clue is the Socket error/closed/retry loop in `C:\BlueIris\log\YYYYMM.txt`.
+
+### How to diagnose
+
+1. Pick one stuck camera's current registry values:
+   ```powershell
+   Get-ItemProperty "HKLM:\SOFTWARE\Perspective Software\Blue Iris\Cameras\<CameraName>" |
+     Select-Object ip, ip_port2, ip_path, xres, yres, mainxres, mainyres, zrect_right, zrect_bottom
+   ```
+2. Ask Protect what dimensions that token actually carries. For LOW, it's usually 640×360. For HIGH, usually the camera's native (e.g. 2688×1512 for a G4 Bullet).
+3. If `xres`/`yres` doesn't match the stream quality that `ip_path` points to, **that's the bug**.
+
+### The fix (per camera, when pushing a new LOW-quality token)
+
+```powershell
+$regPath = "HKLM:\SOFTWARE\Perspective Software\Blue Iris\Cameras\$cameraName"
+
+# --- Path fields ---
+Set-ItemProperty $regPath -Name 'ip_path'    -Value $lowToken -Force
+Set-ItemProperty $regPath -Name 'ip_subpath' -Value $lowToken -Force   # for Protect-fed cams, all three the same works
+Set-ItemProperty $regPath -Name 'ip_path2'   -Value $lowToken -Force
+Set-ItemProperty $regPath -Name 'dsname' -Value "admin@${nvrIP}:80${lowToken}/:7447:1[${lowToken}]" -Force
+
+# --- Resolution fields: MUST MATCH THE STREAM QUALITY ---
+# LOW quality (640x360 is typical for UniFi Protect LOW)
+Set-ItemProperty $regPath -Name 'xres'         -Value 640  -Type DWord -Force
+Set-ItemProperty $regPath -Name 'yres'         -Value 360  -Type DWord -Force
+Set-ItemProperty $regPath -Name 'mainxres'     -Value 2688 -Type DWord -Force   # camera's native resolution (for snapshots)
+Set-ItemProperty $regPath -Name 'mainyres'     -Value 1512 -Type DWord -Force
+Set-ItemProperty $regPath -Name 'fullxres'     -Value 2688 -Type DWord -Force
+Set-ItemProperty $regPath -Name 'fullyres'     -Value 1512 -Type DWord -Force
+Set-ItemProperty $regPath -Name 'zrect_left'   -Value 0    -Type DWord -Force
+Set-ItemProperty $regPath -Name 'zrect_top'    -Value 0    -Type DWord -Force
+Set-ItemProperty $regPath -Name 'zrect_right'  -Value 640  -Type DWord -Force
+Set-ItemProperty $regPath -Name 'zrect_bottom' -Value 360  -Type DWord -Force
+
+# --- Audio format (working reference cams all have this set to 7) ---
+Set-ItemProperty $regPath -Name 'ip_aformat'   -Value 7    -Type DWord -Force
+```
+
+For HIGH quality tokens, set `xres`/`yres`/`zrect_right`/`zrect_bottom` to the camera's native resolution (whatever you see in the UniFi Protect UI for that camera — e.g. 2688×1512, 3840×2160, 2560×1440).
+
+### Reference patterns (from a healthy 62-cam deployment)
+
+| Setup mode | `ip_path` points to | `xres × yres` | `mainxres × mainyres` |
+|---|---|---|---|
+| LOW quality main stream (low CPU) | LOW token | 640 × 360 | 2688 × 1512 |
+| HIGH quality main stream (higher quality recording) | HIGH token | 2688 × 1512 | 2688 × 1512 |
+
+### Why this doesn't bite you during initial setup
+
+When you **add a camera through the Blue Iris UI**, BI probes the stream once at setup time, reads the SDP, and writes all the fields atomically — path AND resolution. It all lines up by construction.
+
+When you **edit the registry directly** (via scripts, bulk imports, or `.reg` files), you only change what you explicitly touch. Everything you didn't touch keeps its old value, which may be stale. That's the whole trap.
+
+### `Refresh-Tokens.ps1` in this repo
+
+The v1 `scripts/Refresh-Tokens.ps1` in this repo (pre-2026-04-20) had this bug — it updated path fields and left resolution fields alone. If your cameras were set up at HIGH and you refreshed to LOW (or vice-versa), they'd go dead silently.
+
+**The v2 script now updates resolution fields too**, reading the actual stream's dimensions from Protect's API before writing. You still need to tell it what resolution to expect per quality — see the updated script header.
+
+---
+
+## 🚨 Token regeneration workaround (POST /rtsps-stream returns 400)
+
+As of Protect firmware versions circa 2026-04 and later, `POST /proxy/protect/integration/v1/cameras/{id}/rtsps-stream` returns:
+
+```
+HTTP/1.1 400 Bad Request
+Content-Length: 0
+```
+
+…with an empty body, regardless of the API key's permissions, the JSON body shape, or whether you try `PATCH` / `PUT` / `DELETE` instead. Multiple body variants tested (`{"qualities":["low"]}`, `{"qualities":["high","medium","low"]}`, `{}`, etc.) all fail identically. `GET` still works fine. This wasn't the case in earlier Protect firmware — it used to work exactly as documented.
+
+**What still works:**
+- `GET /proxy/protect/integration/v1/cameras` — list cameras with state ✅
+- `GET /proxy/protect/integration/v1/cameras/{id}` — single camera detail ✅
+- `GET /proxy/protect/integration/v1/cameras/{id}/rtsps-stream` — current tokens for all qualities ✅
+
+**What doesn't work:**
+- `POST`/`PATCH`/`PUT`/`DELETE` anything ❌
+
+### The workaround
+
+To rotate a camera's RTSP tokens (to fix a misbehaving stream, invalidate an old token, etc.):
+
+1. Open Protect web UI → **Devices** → click the camera
+2. **Settings** → **Advanced** → scroll to the **RTSP** section
+3. **Uncheck** every quality checkbox → **Save**
+4. Wait ~3 seconds
+5. **Re-check** the quality checkbox(es) you need (usually LOW, optionally HIGH) → **Save**
+6. On your management host, run `GET /proxy/protect/integration/v1/cameras/{id}/rtsps-stream` to pull the fresh token(s)
+7. Push the fresh tokens to BI (using the fix pattern above, including resolution fields)
+8. Restart the Blue Iris service so it picks up the new registry values
+
+The `scripts/Refresh-Tokens.ps1` in this repo has a GET-only mode that works on current firmware — use `-GetOnly` to skip the POST. You'll need to do the UI toggle manually for any camera whose tokens you actually want to rotate.
+
+### Why the POST broke
+
+Unclear. The validator IS running (POST with empty body returns a proper schema error: `"must have required property 'qualities'"`), but any validly-shaped body returns `400` with an empty response. Not a permission issue (the API key has full Admin). Ubiquiti support hasn't acknowledged this publicly as of this writing.
+
+If/when a firmware release fixes this, the old POST-based refresh flow will work again. This warning will stay in the README until then.
 
 ---
 
@@ -554,6 +714,16 @@ if (!(Test-Path $regPath)) {
     New-Item -Path $regPath -Force | Out-Null
 }
 
+# Native resolution of the camera (look it up in Protect UI -> camera -> settings)
+# Common values: G4 Bullet = 2688x1512, G4 Pro = 3840x2160, G3 Flex = 1920x1080
+$nativeXres = 2688
+$nativeYres = 1512
+
+# Main stream quality determines xres/yres — MUST match the token you pointed ip_path at
+# If $mainToken is a LOW token, use 640x360. If HIGH, use the camera's native resolution.
+$mainXres = 640   # LOW quality stream dimensions
+$mainYres = 360
+
 # Required properties
 $props = @{
     # Connection
@@ -596,6 +766,21 @@ $props = @{
     "pixfmt"         = 12
     "rtp"            = 0
     "https"          = 0
+
+    # ⚠️ RESOLUTION FIELDS — MUST match the quality that ip_path points at
+    # See "Critical: Resolution Field Mismatch" section above — get this wrong and the
+    # camera will silently fail to stream with a Socket error retry loop.
+    "xres"           = $mainXres      # main stream pixel width (matches ip_path quality)
+    "yres"           = $mainYres      # main stream pixel height
+    "mainxres"       = $nativeXres    # camera's native resolution (for snapshots)
+    "mainyres"       = $nativeYres
+    "fullxres"       = $nativeXres
+    "fullyres"       = $nativeYres
+    "zrect_left"     = 0              # motion detection rectangle — match main stream size
+    "zrect_top"      = 0
+    "zrect_right"    = $mainXres
+    "zrect_bottom"   = $mainYres
+    "ip_aformat"     = 7              # audio format (empirical: 7 works for UniFi Protect RTSP)
 }
 
 foreach ($key in $props.Keys) {
@@ -1170,6 +1355,24 @@ if ($offline -gt 0) {
 
 ## 🔥 Troubleshooting
 
+### 🚨 Tight "Socket error / Socket closed / network retry" loop after refreshing tokens
+
+**Symptom:** BI log shows a ~20-second cycle per affected camera:
+
+```
+1   HH:MM:SS.xxx   cam_name   Signal: network retry
+1   HH:MM:SS.xxx   cam_name   Signal: Socket error
+1   HH:MM:SS.xxx   cam_name   Signal: Socket closed
+```
+
+Camera was working fine before the token refresh / registry edit, now shows NO SIGNAL.
+
+**What's happening:** Resolution field mismatch — the path fields point at one quality (e.g. LOW = 640×360) but `xres`/`yres` still reflect a different quality (e.g. HIGH = 2688×1512). BI's decoder can't fit the wrong-sized frames into its buffer. See the full explanation at **[Critical: Resolution Field Mismatch](#-critical-resolution-field-mismatch-the-silent-killer)**.
+
+**Quick fix:** stop BI, update `xres`, `yres`, `mainxres`, `mainyres`, `fullxres`, `fullyres`, `zrect_right`, `zrect_bottom`, and `ip_aformat` to match the stream you pointed at, start BI. Camera will reconnect within ~30 seconds.
+
+**Confirmation test:** if raw RTSP `DESCRIBE` (e.g. from a PowerShell TcpClient or VLC) against the same URL returns `200 OK` with valid SDP, then the problem is definitely on the BI-decoder side, not the NVR side.
+
 ### Camera Shows "NO SIGNAL"
 
 This is the most common issue. Work through this checklist:
@@ -1323,6 +1526,7 @@ This guide was built on the back of:
 | Version | Date | Changes |
 |---|---|---|
 | 1.0 | 2026-02-18 | Initial release — based on 62-camera migration |
+| 1.1 | 2026-04-20 | **Critical bug documented.** Added the resolution-field-mismatch section (the silent-killer bug: updating RTSP tokens without also updating `xres`/`yres`/`mainxres`/`mainyres`/`zrect_*` leaves BI in a permanent Socket error retry loop). `scripts/Refresh-Tokens.ps1` now updates resolution fields and supports `-GetOnly` mode for current Protect firmware where `POST /rtsps-stream` returns HTTP 400. Registry Injection example in Part 3 now includes resolution fields. New Troubleshooting entry. Discovered during a real incident that bricked 4 of 62 cameras for hours. |
 
 ---
 
