@@ -201,6 +201,123 @@ If/when a firmware release fixes this, the old POST-based refresh flow will work
 
 ---
 
+## 🚨 Critical: Storage Rotation Silent-Failure Modes
+
+> [!danger] Storage rotation can break in three different ways. Each looks the same from outside (drives 100% full, "Disk full" log spam) but the fix is different. Diagnose before patching.
+
+### Failure Mode 1 — Broken Cascade Dead-End
+
+**Symptom:** Drives full. BI logs `Move: over quota X/Y GB` every few minutes but never actually moves files. The "current" GB number keeps creeping up past quota indefinitely.
+
+**Cause:** A storage folder has `moveto` pointing to a NEXT folder whose `path` field is empty (an unconfigured Aux folder). When the source folder fills, BI tries to move clips to the dead-end target, can't, and silently halts instead of falling back to recycle-in-place.
+
+**Real example (62-camera deployment, May 2026):**
+
+| # | Name | Path | moveto | What's wrong |
+|---|------|------|--------|--------------|
+| 0 | New | `E:\BlueIris\New` | 1 → Stored | OK |
+| 1 | Stored | `D:\BlueIris\Stored` | **3 → Aux 1** | ❌ Aux 1 has empty path |
+| 2 | Alerts | `C:\BlueIris\Alerts` | 1 → Stored | OK |
+| 3 | Aux 1 | `(empty)` | — | dead-end |
+
+**How to detect:**
+
+```powershell
+# Audit every storage folder slot
+foreach ($i in 0..15) {
+    $p = "HKLM:\SOFTWARE\Perspective Software\Blue Iris\clips\folders\$i"
+    if (Test-Path $p) {
+        $f = Get-ItemProperty $p
+        "[$i] $($f.name) path='$($f.path)' moveto=$($f.moveto) action=$($f.action)"
+    }
+}
+```
+
+If any folder you cascade INTO has an empty `path`, you have the bug.
+
+**Fix:** For the **last** folder in the cascade, set `moveto = 0` and `action = 2`. That tells BI: "stop trying to move further — just delete oldest when over quota."
+
+```powershell
+# After stopping the BlueIris service:
+Set-ItemProperty 'HKLM:\SOFTWARE\Perspective Software\Blue Iris\clips\folders\1' `
+    -Name moveto -Value 0 -Type DWord
+```
+
+### Failure Mode 2 — `archmb` is the Real Quota, Not `limit`
+
+> [!warning] In BI 6 the `limit` registry field is cosmetic. Quota is enforced by `archmb` (size in MEGABYTES, 1024-based).
+
+**Symptom:** You "lower the quota" by setting `limit` and BI ignores you. The "Move: over quota X/Y GB" log line shows `Y` as a number you never set.
+
+**Why:** Do the math on what BI logs as the quota. If it says `over quota 3168/3166GB`, that 3,166 GB number is `archmb / 1024`. For us: `archmb = 3,241,984 MB → 3,241,984 / 1024 = 3,166 GiB`. Exact match. Meanwhile `limit = 2,900,000,000,000 bytes` (2.9 TB / 2,701 GiB) was never referenced.
+
+| Field | Type | Units | What it actually does |
+|-------|------|-------|-----------------------|
+| `limit` | QWord | bytes | **Cosmetic / legacy. Not enforced.** |
+| `archmb` | DWord | megabytes (1024-based) | **Actual quota trigger.** |
+| `limitsize` | DWord | bool | Master switch — set to 1 to enable size-based quota |
+| `limitage` | DWord | bool | Master switch — set to 1 to enable age-based purge (paired with `archdays`) |
+| `archdays` | DWord | days | Min age before clip is eligible to move/recycle |
+
+**To actually lower a quota:**
+
+```powershell
+# Lower New folder quota to ~2.7 TiB (2,800,000 MB)
+Set-ItemProperty 'HKLM:\SOFTWARE\Perspective Software\Blue Iris\clips\folders\0' `
+    -Name archmb -Value 2800000 -Type DWord
+```
+
+Always change `archmb`. Never trust `limit`.
+
+### Failure Mode 3 — Clip Database Desync
+
+**Symptom:** BI logs `DB clips (X TB) > Disk usage (Y TB), run a repair`. Drives fill while BI claims to be rotating. `MoveFile 2` and `MoveFile 3` warnings flood the log.
+
+**Cause:** BI's clip-tracking DB has phantom entries — references to clips that no longer exist on disk. Crashes, manual cleanups, `robocopy /MIR` empty-source tricks, all create this state. When BI's purge loop tries to "delete oldest" it iterates DB entries, finds the file already missing, "succeeds" with 0 bytes freed, and never touches the real clips on disk that aren't in the DB.
+
+**MoveFile error codes** (Win32):
+
+| Code | Meaning | Implies |
+|------|---------|---------|
+| `MoveFile 2` | `ERROR_FILE_NOT_FOUND` | Source file already deleted (phantom DB entry) |
+| `MoveFile 3` | `ERROR_PATH_NOT_FOUND` | Source path missing |
+| `MoveFile 31` | Generic device error / destination full | Cascade dead-end or destination drive issue |
+
+**Fix:**
+
+1. Manually free disk space (delete oldest `.bvr` files outside BI)
+2. Restart `BlueIris` service — startup log will emit `DB clips (X) > Disk usage (Y), run a repair`
+3. Trigger DB repair in the BI UI: **Settings → Cameras → Database tab → Repair / Regenerate**
+4. Daily auto-compact runs at 02:00 (`DBCompact: started → DBCompact: OK`) — also clears phantom entries automatically
+5. After repair, BI's DB matches disk and rotation resumes
+
+### Confirming Steady State After A Fix
+
+Watch the `Move: over quota` log line for 1+ hours. In a healthy system:
+
+```
+0  Move: over quota 3168/3166GB, 537.5 GB free
+0  Move: over quota 3166/3166GB, 539.0 GB free
+0  Move: over quota 3168/3166GB, 537.0 GB free
+```
+
+The "current" number hovers within 2-3 GB of the "quota" number, free space stable to within ±5 GB. That's BI keeping up — moves out match recordings in. If the current keeps creeping up indefinitely, rotation is still broken.
+
+### Service Name Gotcha
+
+The Windows service is named **`BlueIris`** (no space). Its DisplayName is "Blue Iris Service". PowerShell calls using `Get-Service -Name 'Blue Iris'` (with space) return null and silently no-op stop/start logic. **Always use `BlueIris` for `-Name`** (or `'Blue Iris*'` with `-DisplayName`).
+
+```powershell
+# CORRECT
+Stop-Service  -Name 'BlueIris' -Force
+Start-Service -Name 'BlueIris'
+
+# Silently fails — no service with that exact -Name
+Stop-Service  -Name 'Blue Iris' -Force
+```
+
+---
+
 ## 📋 Who Is This For?
 
 | You Are... | This Guide Will... |
@@ -1445,6 +1562,66 @@ This usually means the RTSP connection is established but no video data is flowi
 - Camera may be in a transitional state — wait 60 seconds
 - NVR may be overloaded — check Protect dashboard for NVR CPU/disk
 
+### Drives 100% Full, "Clip: Disk full" Spamming Every Camera
+
+**Symptom:** Every camera in the log throws `Clip: Disk full` every few seconds. Drives are at 0 bytes free. BI service is running.
+
+**Diagnose first** — three different bugs look identical from outside. See the full breakdown at **[Storage Rotation Silent-Failure Modes](#-critical-storage-rotation-silent-failure-modes)**.
+
+Quick triage:
+
+```powershell
+# 1. Check storage cascade for dead-ends
+foreach ($i in 0..15) {
+    $p = "HKLM:\SOFTWARE\Perspective Software\Blue Iris\clips\folders\$i"
+    if (Test-Path $p) {
+        $f = Get-ItemProperty $p
+        "[$i] $($f.name) path='$($f.path)' moveto=$($f.moveto)"
+    }
+}
+# Any folder being cascaded into with empty path = Failure Mode 1.
+
+# 2. Compare BI's logged quota to what you set
+# In the log, look for: "Move: over quota X/Y GB"
+# Compare Y to (your archmb / 1024) — if they don't match,
+# you set the wrong field. archmb is real, limit is cosmetic.
+
+# 3. Look for the smoking-gun DB warning
+Select-String -Path 'C:\BlueIris\log\*.txt' -Pattern 'DB clips.*run a repair' -SimpleMatch | Select-Object -Last 5
+# If present = Failure Mode 3. Run UI repair + wait for 02:00 auto-compact.
+```
+
+**Recovery sequence** (works for all three modes — each step is harmless if not needed):
+
+```powershell
+# 1. Stop BI cleanly
+Stop-Service -Name 'BlueIris' -Force
+
+# 2. Free 30%+ of each rotation drive — delete oldest .bvr files
+#    (outside BI; we'll repair the DB after)
+$target = 'D:\BlueIris\Stored'  # or wherever
+$needFreeGB = 600
+Get-ChildItem $target -Filter '*.bvr' -File | Sort-Object LastWriteTime |
+    ForEach-Object {
+        $drive = Get-PSDrive -Name $_.PSDrive
+        if ($drive.Free / 1GB -lt $needFreeGB) { Remove-Item $_.FullName -Force }
+    }
+
+# 3. Fix the cascade dead-end if you have one
+Set-ItemProperty 'HKLM:\SOFTWARE\Perspective Software\Blue Iris\clips\folders\1' `
+    -Name moveto -Value 0 -Type DWord
+
+# 4. Optionally lower archmb on each folder so quota leaves 15%+ headroom
+# (Only do this if your existing archmb is too tight)
+# Set-ItemProperty ... -Name archmb -Value <NEW_MB> -Type DWord
+
+# 5. Start BI
+Start-Service -Name 'BlueIris'
+
+# 6. In BI UI: Settings → Cameras → Database tab → Repair / Regenerate
+#    (or wait until 02:00 for the auto-compact)
+```
+
 ---
 
 ## 📚 Reference Cards
@@ -1527,6 +1704,7 @@ This guide was built on the back of:
 |---|---|---|
 | 1.0 | 2026-02-18 | Initial release — based on 62-camera migration |
 | 1.1 | 2026-04-20 | **Critical bug documented.** Added the resolution-field-mismatch section (the silent-killer bug: updating RTSP tokens without also updating `xres`/`yres`/`mainxres`/`mainyres`/`zrect_*` leaves BI in a permanent Socket error retry loop). `scripts/Refresh-Tokens.ps1` now updates resolution fields and supports `-GetOnly` mode for current Protect firmware where `POST /rtsps-stream` returns HTTP 400. Registry Injection example in Part 3 now includes resolution fields. New Troubleshooting entry. Discovered during a real incident that bricked 4 of 62 cameras for hours. |
+| 1.2 | 2026-05-03 | **Storage rotation silent-failure modes documented.** Added a new top-level "🚨 Critical: Storage Rotation Silent-Failure Modes" section covering the three independent ways rotation can break with the same external symptom (drives 100% full, "Disk full" log spam): (1) **broken cascade dead-end** — `moveto` pointing at an unconfigured Aux folder with empty `path` halts rotation silently; (2) **`archmb` is the real quota field, not `limit`** — `limit` is cosmetic in BI 6, only `archmb` (megabytes, 1024-based) is enforced; (3) **clip DB desync** signaled by `DB clips (X) > Disk usage (Y), run a repair` — phantom DB entries from prior crashes/cleanups make purge no-op until repaired. Added recovery sequence to Troubleshooting. Documented the `BlueIris` (no space) service-name gotcha. Discovered during a real recurrence that bypassed all the v1.1 hardening. |
 
 ---
 
